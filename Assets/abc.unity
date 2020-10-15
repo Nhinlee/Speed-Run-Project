@@ -1154,11 +1154,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bcddfb49cbcfaf4c8b64c365d4c0a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mySpeedBoyInput: {fileID: 1081238047}
+  myInput: {fileID: 1081238047}
   myRigid: {fileID: 1081238042}
   myCollider: {fileID: 1081238043}
-  jumpForce: 6.5
-  jumpForceHoldingBonus: 0.2
+  jumpForce: 5
+  jumpForceHoldingBonus: 0.5
+  jumpForceHoldingInterval: 0.2
+  horizontalSpeed: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 64

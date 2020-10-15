@@ -5,67 +5,63 @@ using UnityEngine;
 
 public class SpeedBoyMovement : MonoBehaviour
 {
-    // Component Ref
+    [Header("Component Ref")]
     [SerializeField]
-    private SpeedBoyInput mySpeedBoyInput;
+    private SpeedBoyInput myInput;
     [SerializeField]
     private Rigidbody2D myRigid;
     [SerializeField]
     private BoxCollider2D myCollider;
 
-    // Private Field
+    [Header("Jump Field")]
     [SerializeField]
-    private float jumpForce = 5f;
+    private float jumpForce = 6.5f;
     [SerializeField]
-    private float jumpForceHoldingBonus = 0.2f;
+    private float jumpForceHoldingBonus = 0.5f;
+    [SerializeField]
+    private float jumpForceHoldingInterval = 0.2f;
+    float jumpTime;
 
+    [Header("Horizontal Field")]
+    [SerializeField]
+    private float horizontalSpeed;
+
+    [Header("Check On Ground")]
     [SerializeField]
     private LayerMask groundMask;
-    private bool isOnGround = true;
     [SerializeField]
     private float maxDistanceCheckOnGround;
 
-
-
+    private bool isStartJumpHolding;
+    private bool isOnGround = true;
     private static bool isDrawRayCast = true;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        registerInputEvent();
-    }
-    private void OnDestroy()
-    {
-        unRegisterInputEvent();
-    }
     private void Update()
     {
         CheckOnGround();
+        HorizontalMove();
+        MidAirMove();
     }
 
-    private void registerInputEvent()
+    private void MidAirMove()
     {
-        mySpeedBoyInput.OnJumpPressed += OnJumpPressed;
-        mySpeedBoyInput.OnJumpHolding += OnJumpHolding;
-    }
-
-    private void unRegisterInputEvent()
-    {
-        mySpeedBoyInput.OnJumpPressed -= OnJumpPressed;
-        mySpeedBoyInput.OnJumpHolding -= OnJumpHolding;
-    }
-
-    private void OnJumpHolding()
-    {
-        myRigid.AddForce(Vector2.up * jumpForceHoldingBonus, ForceMode2D.Impulse);
-    }
-
-    private void OnJumpPressed()
-    {
-        if(isOnGround)
+        if (myInput.IsJumpPressed && isOnGround)
         {
+            // Get Jump Time To Add Jump Force holding later
+            jumpTime = Time.time + jumpForceHoldingInterval;
+            // Add Jump force
             myRigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+        else if(myInput.IsJumpHolding && Time.time < jumpTime) 
+        {
+            // Add Jump force holding
+            myRigid.AddForce(Vector2.up * jumpForceHoldingBonus, ForceMode2D.Impulse);
+        }
+    }
+
+    private void HorizontalMove()
+    {
+
     }
 
     private void CheckOnGround()
@@ -75,7 +71,6 @@ public class SpeedBoyMovement : MonoBehaviour
         var groundHit = RayCast(originPos, Vector2.down, maxDistanceCheckOnGround, groundMask);
         isOnGround = groundHit;
     }
-
     private RaycastHit2D RayCast(Vector2 pos, Vector2 direction, float length, LayerMask mask)
     {
         // Raycast
