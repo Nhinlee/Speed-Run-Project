@@ -24,44 +24,86 @@ public class SpeedBoyMovement : MonoBehaviour
 
     [Header("Horizontal Field")]
     [SerializeField]
-    private float horizontalSpeed;
+    private float runSpeed;
 
     [Header("Check On Ground")]
     [SerializeField]
     private LayerMask groundMask;
     [SerializeField]
     private float maxDistanceCheckOnGround;
+    [SerializeField]
+    private float maxDistanceCheckTouchWallRight;
+    [SerializeField]
+    private float maxDistanceCheckTouchWallLeft;
+    [SerializeField]
+    private float isFacingRightDirection = 1;
 
     private bool isStartJumpHolding;
-    private bool isOnGround = true;
+    private bool isOnGround = false;
+    private bool isJumping = false;
     private static bool isDrawRayCast = true;
+
+    private void Start()
+    {
+        InitValue();
+    }
+
+    private void InitValue()
+    {
+        maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.1f;
+    }
 
     private void Update()
     {
         CheckOnGround();
-        HorizontalMove();
+        CheckTouchWall();
+        AutoRun();
         MidAirMove();
+    }
+
+    private void CheckTouchWall()
+    {
+        var rightHit = RayCast(transform.position, Vector2.right, maxDistanceCheckTouchWallRight, groundMask);
+        var leftHit = RayCast(transform.position, Vector2.left, maxDistanceCheckTouchWallLeft, groundMask);
+        if(rightHit)
+        {
+            isFacingRightDirection = -1;
+        }
+        if (leftHit)
+        {
+            isFacingRightDirection = 1;
+        }
     }
 
     private void MidAirMove()
     {
-        if (myInput.IsJumpPressed && isOnGround)
+        if (myInput.IsJumpPressed && isOnGround && !isJumping)
         {
+            isJumping = true;
+
             // Get Jump Time To Add Jump Force holding later
             jumpTime = Time.time + jumpForceHoldingInterval;
             // Add Jump force
             myRigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
-        else if(myInput.IsJumpHolding && Time.time < jumpTime) 
+        
+        if(myInput.IsJumpHolding && Time.time <= jumpTime && !isOnGround) 
         {
             // Add Jump force holding
             myRigid.AddForce(Vector2.up * jumpForceHoldingBonus, ForceMode2D.Impulse);
         }
+        
+        if(Time.time > jumpTime)
+        {
+            isJumping = false;
+        }
     }
 
-    private void HorizontalMove()
+    private void AutoRun()
     {
-
+        var newVelocity = myRigid.velocity;
+        newVelocity.x = runSpeed * isFacingRightDirection;
+        myRigid.velocity = newVelocity;
     }
 
     private void CheckOnGround()
