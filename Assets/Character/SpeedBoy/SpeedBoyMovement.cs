@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SpeedBoyMovement : MonoBehaviour
 {
+    
     [Header("Component Ref")]
     [SerializeField]
     private SpeedBoyInput myInput;
@@ -38,9 +39,45 @@ public class SpeedBoyMovement : MonoBehaviour
     [SerializeField]
     private float isFacingRightDirection = 1;
 
-    private bool isStartJumpHolding;
+    public bool IsJumping
+    {
+        get;
+        private set;
+    }
+    public bool IsRunRight
+    {
+        get;
+        private set;
+    }
+    public bool IsRunLeft
+    {
+        get;
+        private set;
+    }
+    public bool IsTouchWallRight
+    {
+        get;
+        private set;
+    }
+    public bool IsTouchWallLeft
+    {
+        get;
+        private set;
+    }
+    public bool IsMidAir
+    {
+        get
+        {
+            if (!isOnGround)
+                return true;
+            return false;
+        }
+        private set
+        {
+
+        }
+    }
     private bool isOnGround = false;
-    private bool isJumping = false;
     private static bool isDrawRayCast = true;
 
     private void Start()
@@ -51,6 +88,7 @@ public class SpeedBoyMovement : MonoBehaviour
     private void InitValue()
     {
         maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.1f;
+        IsRunRight = true;
     }
 
     private void Update()
@@ -68,18 +106,31 @@ public class SpeedBoyMovement : MonoBehaviour
         if(rightHit)
         {
             isFacingRightDirection = -1;
+            IsTouchWallRight = true;
+            IsRunLeft = true;
+            IsRunRight = false;
         }
-        if (leftHit)
+        else if (leftHit)
         {
             isFacingRightDirection = 1;
+            IsTouchWallLeft = true;
+            IsRunRight = true;
+            IsRunLeft = false;
         }
+        else
+        {
+            IsTouchWallRight = IsTouchWallLeft = false;
+        }
+
     }
 
     private void MidAirMove()
     {
-        if (myInput.IsJumpPressed && isOnGround && !isJumping)
+        if (myInput.IsJumpPressed 
+            && (isOnGround || IsTouchWallRight || IsTouchWallLeft) 
+            && !IsJumping)
         {
-            isJumping = true;
+            IsJumping = true;
 
             // Get Jump Time To Add Jump Force holding later
             jumpTime = Time.time + jumpForceHoldingInterval;
@@ -95,7 +146,7 @@ public class SpeedBoyMovement : MonoBehaviour
         
         if(Time.time > jumpTime)
         {
-            isJumping = false;
+            IsJumping = false;
         }
     }
 
