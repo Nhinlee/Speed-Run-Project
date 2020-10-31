@@ -36,49 +36,19 @@ public class SpeedBoyMovement : MonoBehaviour
     private float maxDistanceCheckTouchWallRight;
     [SerializeField]
     private float maxDistanceCheckTouchWallLeft;
+
+    [Header("Touching Wall")]
     [SerializeField]
-    private float isFacingRightDirection = 1;
+    private float gravityScaleTouchingWall = 0.1f;
 
-    public bool IsJumping
-    {
-        get;
-        private set;
-    }
-    public bool IsRunRight
-    {
-        get;
-        private set;
-    }
-    public bool IsRunLeft
-    {
-        get;
-        private set;
-    }
-    public bool IsTouchWallRight
-    {
-        get;
-        private set;
-    }
-    public bool IsTouchWallLeft
-    {
-        get;
-        private set;
-    }
-    public bool IsMidAir
-    {
-        get
-        {
-            if (!isOnGround)
-                return true;
-            return false;
-        }
-        private set
-        {
+    public int IsFacingRightDirection { get; private set; }
+    public bool IsMidAir { get; private set; }
 
-        }
-    }
+    private bool isDrawRayCast = true;
     private bool isOnGround = false;
-    private static bool isDrawRayCast = true;
+    private bool isGroundJumping = false;
+    private bool isTouchingWall = false;
+    private bool isWallJumping = false;
 
     private void Start()
     {
@@ -87,82 +57,134 @@ public class SpeedBoyMovement : MonoBehaviour
 
     private void InitValue()
     {
-        maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.1f;
-        IsRunRight = true;
+        maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
+        IsFacingRightDirection = 1;
     }
 
     private void Update()
     {
+        // Check Condition
         CheckOnGround();
         CheckTouchWall();
-        AutoRun();
-        MidAirMove();
+       
+        // Special Move
+        WallSlice();
+        GroundJump();
+        WallJump();
+
+        // Run
+        Run();
     }
 
-    private void CheckTouchWall()
+    private void WallJump()
     {
-        var rightHit = RayCast(transform.position, Vector2.right, maxDistanceCheckTouchWallRight, groundMask);
-        var leftHit = RayCast(transform.position, Vector2.left, maxDistanceCheckTouchWallLeft, groundMask);
-        if(rightHit)
+        if(myInput.IsJumpPressed && isTouchingWall && !isOnGround && !isWallJumping)
         {
-            isFacingRightDirection = -1;
-            IsTouchWallRight = true;
-            IsRunLeft = true;
-            IsRunRight = false;
+            // Change Run Direction
+            IsFacingRightDirection *= -1;
+            // Set flag is Jumping to control time holding jump button
+            isWallJumping = true;
+            // Get Jump Time To Add Jump Force holding later
+            jumpTime = Time.time + jumpForceHoldingInterval;
+            // Reset Y - Velocity to persist gravity
+            myRigid.velocity = new Vector2(0f, 0f);
+            // Add Jump force
+            myRigid.AddForce(
+                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)) * 1.5f,
+                ForceMode2D.Impulse);
         }
-        else if (leftHit)
+
+        if (myInput.IsJumpHolding && Time.time <= jumpTime && isWallJumping)
         {
-            isFacingRightDirection = 1;
-            IsTouchWallLeft = true;
-            IsRunRight = true;
-            IsRunLeft = false;
+            // Add Jump force holding
+            myRigid.AddForce(
+                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)),
+                ForceMode2D.Impulse);
+        }
+
+        if (Time.time > jumpTime)
+        {
+            isWallJumping = false;
+        }
+    }
+    private void WallSlice()
+    {
+        if (isTouchingWall) 
+        {
+            myRigid.gravityScale = gravityScaleTouchingWall;
         }
         else
         {
-            IsTouchWallRight = IsTouchWallLeft = false;
+            myRigid.gravityScale = 1f;
         }
-
     }
-
-    private void MidAirMove()
+    private void GroundJump()
     {
-        if (myInput.IsJumpPressed 
-            && (isOnGround || IsTouchWallRight || IsTouchWallLeft) 
-            && !IsJumping)
+        if(myInput.IsJumpPressed)
         {
-            IsJumping = true;
-
-            // Get Jump Time To Add Jump Force holding later
-            jumpTime = Time.time + jumpForceHoldingInterval;
-            // Add Jump force
-            myRigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if(isOnGround && !isGroundJumping)
+            {
+                // Set flag is Jumping to control time holding jump button
+                isGroundJumping = true;
+                IsMidAir = true;
+                // Get Jump Time To Add Jump Force holding later
+                jumpTime = Time.time + jumpForceHoldingInterval;
+                // Add Jump force
+                myRigid.AddForce(
+                    Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
+                    ForceMode2D.Impulse);
+            }
         }
-        
-        if(myInput.IsJumpHolding && Time.time <= jumpTime && !isOnGround) 
+        if(myInput.IsJumpHolding && Time.time <= jumpTime && isGroundJumping) 
         {
             // Add Jump force holding
-            myRigid.AddForce(Vector2.up * jumpForceHoldingBonus, ForceMode2D.Impulse);
+            myRigid.AddForce(
+                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)), 
+                ForceMode2D.Impulse);
         }
         
         if(Time.time > jumpTime)
         {
-            IsJumping = false;
+            isGroundJumping = false;
         }
     }
-
+    private void Run()
+    {
+        if (isTouchingWall && !isWallJumping)
+        {
+            StopRun();
+        }
+        else
+        {
+            AutoRun();
+        }
+    }
     private void AutoRun()
     {
         var newVelocity = myRigid.velocity;
-        newVelocity.x = runSpeed * isFacingRightDirection;
+        newVelocity.x = runSpeed * IsFacingRightDirection;
         myRigid.velocity = newVelocity;
     }
-
+    private void StopRun()
+    {
+        var newVelocity = myRigid.velocity;
+        newVelocity.x = 0f;
+        myRigid.velocity = newVelocity;
+    }
+    private void CheckTouchWall()
+    {
+        var rightHit = RayCast(transform.position, Vector2.right, maxDistanceCheckTouchWallRight, groundMask);
+        var leftHit = RayCast(transform.position, Vector2.left, maxDistanceCheckTouchWallLeft, groundMask);
+       
+        isTouchingWall = rightHit || leftHit;
+    }
     private void CheckOnGround()
     {
         var originPos = transform.position;
         originPos.y -= myCollider.size.y / 2;
         var groundHit = RayCast(originPos, Vector2.down, maxDistanceCheckOnGround, groundMask);
         isOnGround = groundHit;
+        IsMidAir = false;
     }
     private RaycastHit2D RayCast(Vector2 pos, Vector2 direction, float length, LayerMask mask)
     {
@@ -181,3 +203,4 @@ public class SpeedBoyMovement : MonoBehaviour
     }
 
 }
+

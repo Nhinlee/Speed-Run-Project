@@ -25,21 +25,10 @@ public class SpeedBoyAnimation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(myMovement.IsRunRight)
-        {
-            ResetParams();
-            myAnimator.SetBool(hashParamIsAutoRunRight, true);
-        }
-        if(myMovement.IsRunLeft)
-        {
-            ResetParams();
-            myAnimator.SetBool(hashParamIsAutoRunLeft, true);
-        }    
-        if(myMovement.IsMidAir)
-        {
-            ResetParams();
-            myAnimator.SetBool(hashParamIsJumping, true);
-        }
+        ResetParams();
+        myAnimator.SetBool(hashParamIsAutoRunRight, myMovement.IsFacingRightDirection == 1);
+        myAnimator.SetBool(hashParamIsAutoRunLeft, myMovement.IsFacingRightDirection == -1);
+        /*myAnimator.SetBool(hashParamIsJumping, myMovement.IsMidAir);*/
     }
 
     private void ResetParams()
