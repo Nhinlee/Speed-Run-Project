@@ -1202,7 +1202,7 @@ MonoBehaviour:
   myInput: {fileID: 1081238047}
   myRigid: {fileID: 1081238042}
   myCollider: {fileID: 1081238043}
-  jumpForce: 4.5
+  jumpForce: 3.1
   jumpForceHoldingBonus: 0.3
   jumpForceHoldingInterval: 0.15
   runSpeed: 8

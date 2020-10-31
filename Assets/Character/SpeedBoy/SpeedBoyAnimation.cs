@@ -28,7 +28,11 @@ public class SpeedBoyAnimation : MonoBehaviour
         ResetParams();
         myAnimator.SetBool(hashParamIsAutoRunRight, myMovement.IsFacingRightDirection == 1);
         myAnimator.SetBool(hashParamIsAutoRunLeft, myMovement.IsFacingRightDirection == -1);
-        /*myAnimator.SetBool(hashParamIsJumping, myMovement.IsMidAir);*/
+        if(myMovement.IsMidAir)
+        {
+            ResetParams();
+            myAnimator.SetBool(hashParamIsJumping, myMovement.IsMidAir);
+        }
     }
 
     private void ResetParams()

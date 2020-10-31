@@ -184,7 +184,10 @@ public class SpeedBoyMovement : MonoBehaviour
         originPos.y -= myCollider.size.y / 2;
         var groundHit = RayCast(originPos, Vector2.down, maxDistanceCheckOnGround, groundMask);
         isOnGround = groundHit;
-        IsMidAir = false;
+        if(isOnGround)
+        {
+            IsMidAir = false;
+        }    
     }
     private RaycastHit2D RayCast(Vector2 pos, Vector2 direction, float length, LayerMask mask)
     {
