@@ -148,7 +148,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 116815655}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.13, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -12.702, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1994905139}
@@ -344,7 +344,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 462470790}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.63, y: -2.58, z: -10}
+  m_LocalPosition: {x: -9.202, y: -2.58, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1850202539}
@@ -1180,7 +1180,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1081238041}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.63, y: -2.58, z: 0}
+  m_LocalPosition: {x: -9.202, y: -2.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1931307328}
@@ -1204,9 +1204,9 @@ MonoBehaviour:
   myRigid: {fileID: 1081238042}
   myCollider: {fileID: 1081238043}
   jumpForce: 10
-  jumpForceHoldingBonus: 3
-  jumpForceHoldingInterval: 0.3
-  runSpeed: 0
+  jumpForceHoldingBonus: 0.45
+  jumpForceHoldingInterval: 0.2
+  runSpeed: 8
   groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1437,7 +1437,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645757597}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.13, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -5.7019997, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 415695376}
@@ -1681,7 +1681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935363421}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.13, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -12.702, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 793174934}

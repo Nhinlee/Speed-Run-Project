@@ -40,6 +40,8 @@ public class SpeedBoyMovement : MonoBehaviour
     [Header("Touching Wall")]
     [SerializeField]
     private float gravityScaleTouchingWall = 0.1f;
+    [SerializeField]
+    private float jumpForceBonusWhenTouchingWall = 1f;
 
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
@@ -51,6 +53,8 @@ public class SpeedBoyMovement : MonoBehaviour
     private bool isGroundJumping = false;
     private bool isTouchingWall = false;
     private bool isWallJumping = false;
+    private SpeedBoyState speedBoyState;
+    private bool isWallSlice = false;
 
     private void Start()
     {
@@ -61,12 +65,46 @@ public class SpeedBoyMovement : MonoBehaviour
         // Check Condition
         CheckOnGround();
         CheckTouchWall();
-
-        // Special Move
-        WallSlice();
-
-        // Run
+        
+        // Move----------------
         Run();
+        //---------------------
+        SpecialMove();
+        //----------------------
+        SetSpeedBoyState();
+    }
+
+    private void SpecialMove()
+    {
+        if(!isOnGround && speedBoyState.GroundJumping && isTouchingWall)
+        {
+            var oldYVelocity = myRigid.velocity.y;
+
+            myRigid.velocity = new Vector2(myRigid.velocity.x, 0f);
+
+            if(oldYVelocity > 0)
+            {
+                myRigid.AddForce(
+                Vector2.up * jumpForceBonusWhenTouchingWall * (float)(Math.Sqrt(myRigid.gravityScale)),
+                ForceMode2D.Impulse);
+            }
+        }
+    }
+
+    private void SetSpeedBoyState()
+    {
+        if(isTouchingWall)
+        {
+            speedBoyState.SetState(State.WALL_SLICE);
+        }
+        if(isTouchingWall && isWallJumping)
+        {
+            speedBoyState.SetState(State.WALL_JUMPING);
+        }
+        if(isGroundJumping)
+        {
+            speedBoyState.SetState(State.GROUND_JUMPING);
+        }
     }
 
     private void FixedUpdate()
@@ -80,6 +118,7 @@ public class SpeedBoyMovement : MonoBehaviour
     {
         GroundJump();
         WallJump();
+        WallSlice();
     }
 
     // Private Methods
@@ -87,6 +126,7 @@ public class SpeedBoyMovement : MonoBehaviour
     {
         maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
         IsFacingRightDirection = 1;
+        speedBoyState = SpeedBoyState.GetInstance();
     }
     private void WallJump()
     {
@@ -109,18 +149,23 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void WallSlice()
     {
-        if (isTouchingWall) 
+        
+        if (isOnGround && !isWallSlice && isTouchingWall)
         {
-            myRigid.gravityScale = gravityScaleTouchingWall;
-        }
-        else
-        {
-            myRigid.gravityScale = 1f;
+            // Set flag is Jumping to control time holding jump button
+            isWallSlice = true;
+            IsMidAir = true;
+            // Get Jump Time To Add Jump Force holding later
+            jumpTime = Time.time + jumpForceHoldingInterval;
+            // Add Jump force
+            myRigid.AddForce(
+                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
+                ForceMode2D.Impulse);
         }
     }
     private void GroundJump()
     {
-        if(isOnGround && !isGroundJumping)
+        if(isOnGround && !isGroundJumping && !isTouchingWall)
         {
             // Set flag is Jumping to control time holding jump button
             isGroundJumping = true;
@@ -135,7 +180,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void Jumping()
     {
-        if (myCustomInput.IsJumpHolding && Time.time <= jumpTime && (isGroundJumping || isWallJumping))
+        if (myCustomInput.IsJumpHolding && Time.time <= jumpTime && (isGroundJumping || isWallJumping || isWallSlice))
         {
             // Add Jump force holding
             myRigid.AddForce(
@@ -147,6 +192,7 @@ public class SpeedBoyMovement : MonoBehaviour
         {
             isGroundJumping = false;
             isWallJumping = false;
+            isWallSlice = false;
         }
     }
     private void Run()
@@ -162,15 +208,11 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void AutoRun()
     {
-        var newVelocity = myRigid.velocity;
-        newVelocity.x = runSpeed * IsFacingRightDirection;
-        myRigid.velocity = newVelocity;
+        myRigid.velocity = new Vector2(runSpeed * IsFacingRightDirection, myRigid.velocity.y);
     }
     private void StopRun()
     {
-        var newVelocity = myRigid.velocity;
-        newVelocity.x = 0f;
-        myRigid.velocity = newVelocity;
+        myRigid.velocity = new Vector2(0f, myRigid.velocity.y);
     }
     private void CheckTouchWall()
     {
@@ -178,6 +220,15 @@ public class SpeedBoyMovement : MonoBehaviour
         var leftHit = RayCast(transform.position, Vector2.left, maxDistanceCheckTouchWallLeft, groundMask);
        
         isTouchingWall = rightHit || leftHit;
+
+        if (isTouchingWall)
+        {
+            myRigid.gravityScale = gravityScaleTouchingWall;
+        }
+        else
+        {
+            myRigid.gravityScale = 1f;
+        }
     }
     private void CheckOnGround()
     {
@@ -206,4 +257,52 @@ public class SpeedBoyMovement : MonoBehaviour
         return hit;
     }
 }
+
+enum State
+{   
+    GROUND_JUMPING,
+    WALL_SLICE,
+    WALL_JUMPING,
+}
+class SpeedBoyState
+{
+    // Singleton
+    protected SpeedBoyState() { }
+
+    private static SpeedBoyState instance = null;
+    public static SpeedBoyState GetInstance()
+    {
+        if (instance == null)
+            instance = new SpeedBoyState();
+        return instance;
+    }
+    
+    // Properties
+    /*public bool Running { get; private set; }*/
+    public bool GroundJumping { get; private set; }
+    public bool WallSlice { get; private set; }
+    public bool WallJumping { get; private set; }
+
+    // Methods
+    public void SetState(State state)
+    {
+        ResetState();
+        switch (state)
+        {
+            /*case State.RUN: Running = true; break;*/
+            case State.GROUND_JUMPING: GroundJumping = true; break;
+            case State.WALL_SLICE: WallSlice = true; break;
+            case State.WALL_JUMPING: WallJumping = true; break;
+        }
+    }
+
+    private void ResetState()
+    {
+        /*Running = false;*/
+        GroundJumping = false;
+        WallSlice = false;
+        WallJumping = false;
+    }
+}
+
 
