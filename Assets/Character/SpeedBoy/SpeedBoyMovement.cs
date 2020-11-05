@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SpeedBoyMovement : MonoBehaviour
 {
-    
     [Header("Component Ref")]
     [SerializeField]
-    private SpeedBoyInput myInput;
+    private SpeedBoyInput myCustomInput;
     [SerializeField]
     private Rigidbody2D myRigid;
     [SerializeField]
@@ -16,9 +16,9 @@ public class SpeedBoyMovement : MonoBehaviour
 
     [Header("Jump Field")]
     [SerializeField]
-    private float jumpForce = 6.5f;
+    private float jumpForce = 10f;
     [SerializeField]
-    private float jumpForceHoldingBonus = 0.5f;
+    private float jumpForceHoldingBonus = 0.45f;
     [SerializeField]
     private float jumpForceHoldingInterval = 0.2f;
     float jumpTime;
@@ -41,9 +41,11 @@ public class SpeedBoyMovement : MonoBehaviour
     [SerializeField]
     private float gravityScaleTouchingWall = 0.1f;
 
+    // Property to control animation
     public int IsFacingRightDirection { get; private set; }
     public bool IsMidAir { get; private set; }
 
+    // Private Flag to control behavior of speedboy
     private bool isDrawRayCast = true;
     private bool isOnGround = false;
     private bool isGroundJumping = false;
@@ -54,36 +56,47 @@ public class SpeedBoyMovement : MonoBehaviour
     {
         InitValue();
     }
-
-    private void InitValue()
-    {
-        maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
-        IsFacingRightDirection = 1;
-    }
-
     private void Update()
     {
         // Check Condition
         CheckOnGround();
         CheckTouchWall();
-       
+
         // Special Move
         WallSlice();
-        GroundJump();
-        WallJump();
 
         // Run
         Run();
     }
 
+    private void FixedUpdate()
+    {
+        // Jump Holding //
+        Jumping();
+    }
+
+    // Callback from input system
+    public void OnJump()
+    {
+        GroundJump();
+        WallJump();
+    }
+
+    // Private Methods
+    private void InitValue()
+    {
+        maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
+        IsFacingRightDirection = 1;
+    }
     private void WallJump()
     {
-        if(myInput.IsJumpPressed && isTouchingWall && !isOnGround && !isWallJumping)
+        if(isTouchingWall && !isOnGround && !isWallJumping)
         {
             // Change Run Direction
             IsFacingRightDirection *= -1;
             // Set flag is Jumping to control time holding jump button
             isWallJumping = true;
+            IsMidAir = true;
             // Get Jump Time To Add Jump Force holding later
             jumpTime = Time.time + jumpForceHoldingInterval;
             // Reset Y - Velocity to persist gravity
@@ -92,19 +105,6 @@ public class SpeedBoyMovement : MonoBehaviour
             myRigid.AddForce(
                 Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)) * 1.5f,
                 ForceMode2D.Impulse);
-        }
-
-        if (myInput.IsJumpHolding && Time.time <= jumpTime && isWallJumping)
-        {
-            // Add Jump force holding
-            myRigid.AddForce(
-                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)),
-                ForceMode2D.Impulse);
-        }
-
-        if (Time.time > jumpTime)
-        {
-            isWallJumping = false;
         }
     }
     private void WallSlice()
@@ -120,32 +120,33 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void GroundJump()
     {
-        if(myInput.IsJumpPressed)
+        if(isOnGround && !isGroundJumping)
         {
-            if(isOnGround && !isGroundJumping)
-            {
-                // Set flag is Jumping to control time holding jump button
-                isGroundJumping = true;
-                IsMidAir = true;
-                // Get Jump Time To Add Jump Force holding later
-                jumpTime = Time.time + jumpForceHoldingInterval;
-                // Add Jump force
-                myRigid.AddForce(
-                    Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
-                    ForceMode2D.Impulse);
-            }
+            // Set flag is Jumping to control time holding jump button
+            isGroundJumping = true;
+            IsMidAir = true;
+            // Get Jump Time To Add Jump Force holding later
+            jumpTime = Time.time + jumpForceHoldingInterval;
+            // Add Jump force
+            myRigid.AddForce(
+                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
+                ForceMode2D.Impulse);
         }
-        if(myInput.IsJumpHolding && Time.time <= jumpTime && isGroundJumping) 
+    }
+    private void Jumping()
+    {
+        if (myCustomInput.IsJumpHolding && Time.time <= jumpTime && (isGroundJumping || isWallJumping))
         {
             // Add Jump force holding
             myRigid.AddForce(
-                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)), 
+                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)),
                 ForceMode2D.Impulse);
         }
-        
-        if(Time.time > jumpTime)
+
+        if (Time.time > jumpTime)
         {
             isGroundJumping = false;
+            isWallJumping = false;
         }
     }
     private void Run()
@@ -204,6 +205,5 @@ public class SpeedBoyMovement : MonoBehaviour
 
         return hit;
     }
-
 }
 

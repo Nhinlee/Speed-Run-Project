@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-100)]
 public class SpeedBoyInput : MonoBehaviour
 {
-    public bool IsJumpPressed { get; private set; }
     public bool IsJumpHolding { get; private set; }
 
     private bool isReadyToClear = false;
@@ -18,20 +17,18 @@ public class SpeedBoyInput : MonoBehaviour
         isReadyToClear = true;
     }
 
-    private void Update()
+    private void Update()   
     {
         if (isReadyToClear)
         {
             ResetInput();
         }
-        IsJumpPressed = IsJumpPressed || Input.GetButtonDown("Jump");
         IsJumpHolding = IsJumpHolding || Input.GetButton("Jump");
     }
 
     private void ResetInput()
     {
         IsJumpHolding = false;
-        IsJumpPressed = false;
 
         isReadyToClear = false;
     }

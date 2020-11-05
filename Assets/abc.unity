@@ -148,7 +148,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 116815655}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.35, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -13.13, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1994905139}
@@ -344,7 +344,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 462470790}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.85, y: -2.58, z: -10}
+  m_LocalPosition: {x: -9.63, y: -2.58, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1850202539}
@@ -1062,10 +1062,11 @@ GameObject:
   - component: {fileID: 1081238044}
   - component: {fileID: 1081238043}
   - component: {fileID: 1081238042}
-  - component: {fileID: 1081238047}
   - component: {fileID: 1081238046}
   - component: {fileID: 1081238049}
+  - component: {fileID: 1081238050}
   - component: {fileID: 1081238048}
+  - component: {fileID: 1081238047}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1179,7 +1180,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1081238041}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.85, y: -2.58, z: 0}
+  m_LocalPosition: {x: -9.63, y: -2.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1931307328}
@@ -1199,13 +1200,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bcddfb49cbcfaf4c8b64c365d4c0a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myInput: {fileID: 1081238047}
+  myCustomInput: {fileID: 1081238047}
   myRigid: {fileID: 1081238042}
   myCollider: {fileID: 1081238043}
-  jumpForce: 3.1
-  jumpForceHoldingBonus: 0.3
-  jumpForceHoldingInterval: 0.15
-  runSpeed: 8
+  jumpForce: 10
+  jumpForceHoldingBonus: 3
+  jumpForceHoldingInterval: 0.3
+  runSpeed: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1258,6 +1259,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myAnimator: {fileID: 1081238048}
   myMovement: {fileID: 1081238046}
+--- !u!114 &1081238050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081238041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 4d451e41fb7aeeb438a0f3c8554bd4fc, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1081238046}
+        m_TargetAssemblyTypeName: SpeedBoyMovement, Assembly-CSharp
+        m_MethodName: OnJumpPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c01101d8-0348-4d21-9018-d83d05c82d9f
+    m_ActionName: SpeedBoy/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1081238046}
+        m_TargetAssemblyTypeName: SpeedBoyMovement, Assembly-CSharp
+        m_MethodName: OnJumpHolding
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: babfdf65-8164-4851-b076-f94d630c941d
+    m_ActionName: SpeedBoy/Jumping[/Keyboard/space]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Keyboard And Mouse
+  m_DefaultActionMap: SpeedBoy
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1469787818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1374,7 +1437,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645757597}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.35, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -6.13, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 415695376}
@@ -1618,7 +1681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935363421}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.35, y: -1.0799999, z: -10}
+  m_LocalPosition: {x: -13.13, y: -1.0799999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 793174934}
