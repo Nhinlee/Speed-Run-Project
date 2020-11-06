@@ -12,13 +12,21 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Punch",
+                    "type": "Button",
+                    "id": "ec018fe5-cf32-49bd-9e08-1e6b850b76b6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "ad08ddac-ba9d-4637-b54e-222b6462b064",
-                    "path": "<Keyboard>/space",
+                    "id": "c4ce8fa2-eebe-4f16-95c9-4b61f7712de2",
+                    "path": "<Keyboard>/w",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard And Mouse",
@@ -28,12 +36,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c4ce8fa2-eebe-4f16-95c9-4b61f7712de2",
-                    "path": "<Keyboard>/w",
+                    "id": "93aca2e3-34e8-46e4-b7c2-32e13f9ad859",
+                    "path": "<Keyboard>/space",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard And Mouse",
-                    "action": "Jump",
+                    "action": "Punch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

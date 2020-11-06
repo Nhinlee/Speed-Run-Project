@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SpeedBoyMovement : MonoBehaviour
 {
@@ -16,11 +15,11 @@ public class SpeedBoyMovement : MonoBehaviour
 
     [Header("Jump Field")]
     [SerializeField]
-    private float jumpForce = 10f;
+    private float forceJump = 10f;
     [SerializeField]
-    private float jumpForceHoldingBonus = 0.45f;
+    private float forceJumpHoldingBonus = 0.45f;
     [SerializeField]
-    private float jumpForceHoldingInterval = 0.2f;
+    private float intervalJumpHolding = 0.2f;
     float jumpTime;
 
     [Header("Horizontal Field")]
@@ -41,7 +40,17 @@ public class SpeedBoyMovement : MonoBehaviour
     [SerializeField]
     private float gravityScaleTouchingWall = 0.1f;
     [SerializeField]
-    private float jumpForceBonusWhenTouchingWall = 1f;
+    private float forceJumpBonusWhenTouchingWall = 1f;
+
+    [Header("Punch And Dash")]
+    [SerializeField]
+    private float maxDistancePunchAndDash = 2f;
+    [SerializeField]
+    private float speedDashing = 10f;
+    // TODO: This so confused
+    [SerializeField]
+    private float forceYBonusWhenDashing = 0.6f;
+    private Coroutine coroutinePunchAndDash = null;
 
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
@@ -55,6 +64,8 @@ public class SpeedBoyMovement : MonoBehaviour
     private bool isWallJumping = false;
     private SpeedBoyState speedBoyState;
     private bool isWallSlice = false;
+    private bool isPunchingAndDashing = false;
+    private int punchingAndDashingCount = 0;
 
     private void Start()
     {
@@ -70,12 +81,30 @@ public class SpeedBoyMovement : MonoBehaviour
         Run();
         //---------------------
         SpecialMove();
-        //----------------------
+        ResetDashingCount();
+        //Debug.Log($"Running: {speedBoyState.Running}");
+        //Debug.Log($"GroundJumping: {speedBoyState.GroundJumping}");
+        //Debug.Log($"WallSlice: {speedBoyState.WallSlice}");
+        //Debug.Log($"WallJumping: {speedBoyState.WallJumping}");
+        //Debug.Log($"Punching: {speedBoyState.Punching}");
+
+        // Set state of SpeedBoyState Instance
         SetSpeedBoyState();
+
+    }
+
+    private void ResetDashingCount()
+    {
+        if (speedBoyState.Running || speedBoyState.WallSlice)
+        {
+            punchingAndDashingCount = 0;
+        }
     }
 
     private void SpecialMove()
     {
+        // Transition from Ground Jumping to WallSlice 
+        //(Đang nhảy mà chạm tường thì sẽ cộng thêm 1 lực nhất định -> character trượt lên một đoạn nhỏ)
         if(!isOnGround && speedBoyState.GroundJumping && isTouchingWall)
         {
             var oldYVelocity = myRigid.velocity.y;
@@ -85,10 +114,16 @@ public class SpeedBoyMovement : MonoBehaviour
             if(oldYVelocity > 0)
             {
                 myRigid.AddForce(
-                Vector2.up * jumpForceBonusWhenTouchingWall * (float)(Math.Sqrt(myRigid.gravityScale)),
+                Vector2.up * forceJumpBonusWhenTouchingWall * (float)(Math.Sqrt(myRigid.gravityScale)),
                 ForceMode2D.Impulse);
             }
         }
+        // Transition from Walljumping to WallSlice (Chạm tường)
+        if((speedBoyState.WallJumping || speedBoyState.Punching) && isTouchingWall)
+        {
+            myRigid.velocity = new Vector2(myRigid.velocity.x, 0f);
+        }
+        
     }
 
     private void SetSpeedBoyState()
@@ -97,13 +132,21 @@ public class SpeedBoyMovement : MonoBehaviour
         {
             speedBoyState.SetState(State.WALL_SLICE);
         }
-        if(isTouchingWall && isWallJumping)
+        if(!isTouchingWall && isWallJumping)
         {
             speedBoyState.SetState(State.WALL_JUMPING);
         }
         if(isGroundJumping)
         {
             speedBoyState.SetState(State.GROUND_JUMPING);
+        }
+        if (!isTouchingWall && isPunchingAndDashing)
+        {
+            speedBoyState.SetState(State.PUNCHING);
+        }
+        if(isOnGround && !isTouchingWall)
+        {
+            speedBoyState.SetState(State.RUNNING);
         }
     }
 
@@ -121,7 +164,34 @@ public class SpeedBoyMovement : MonoBehaviour
         WallSlice();
     }
 
-    // Private Methods
+    public void OnPunch()
+    {
+        if(!isOnGround 
+            && !isTouchingWall 
+            && punchingAndDashingCount < 1 
+            && !isPunchingAndDashing)
+        {
+            isPunchingAndDashing = true;
+            punchingAndDashingCount++;
+            if(coroutinePunchAndDash != null)
+                StopCoroutine(coroutinePunchAndDash);
+            coroutinePunchAndDash = StartCoroutine(CoroutinePunchAndDash());
+        }
+    }
+
+    private IEnumerator CoroutinePunchAndDash()
+    {
+        Vector2 startPosition = transform.position;
+        while(
+            Mathf.Abs(startPosition.x - transform.position.x) < maxDistancePunchAndDash
+            && !isTouchingWall)
+        {
+            myRigid.velocity = new Vector2(speedDashing * IsFacingRightDirection, forceYBonusWhenDashing);
+            yield return null;
+        }
+        myRigid.velocity = new Vector2(0f, 0f);
+        isPunchingAndDashing = false;
+    }
     private void InitValue()
     {
         maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
@@ -138,12 +208,12 @@ public class SpeedBoyMovement : MonoBehaviour
             isWallJumping = true;
             IsMidAir = true;
             // Get Jump Time To Add Jump Force holding later
-            jumpTime = Time.time + jumpForceHoldingInterval;
+            jumpTime = Time.time + intervalJumpHolding;
             // Reset Y - Velocity to persist gravity
             myRigid.velocity = new Vector2(0f, 0f);
             // Add Jump force
             myRigid.AddForce(
-                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)) * 1.5f,
+                Vector2.up * forceJump * (float)(Math.Sqrt(myRigid.gravityScale)) * 1.5f,
                 ForceMode2D.Impulse);
         }
     }
@@ -156,10 +226,10 @@ public class SpeedBoyMovement : MonoBehaviour
             isWallSlice = true;
             IsMidAir = true;
             // Get Jump Time To Add Jump Force holding later
-            jumpTime = Time.time + jumpForceHoldingInterval;
+            jumpTime = Time.time + intervalJumpHolding;
             // Add Jump force
             myRigid.AddForce(
-                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
+                Vector2.up * forceJump * (float)(Math.Sqrt(myRigid.gravityScale)),
                 ForceMode2D.Impulse);
         }
     }
@@ -171,10 +241,10 @@ public class SpeedBoyMovement : MonoBehaviour
             isGroundJumping = true;
             IsMidAir = true;
             // Get Jump Time To Add Jump Force holding later
-            jumpTime = Time.time + jumpForceHoldingInterval;
+            jumpTime = Time.time + intervalJumpHolding;
             // Add Jump force
             myRigid.AddForce(
-                Vector2.up * jumpForce * (float)(Math.Sqrt(myRigid.gravityScale)),
+                Vector2.up * forceJump * (float)(Math.Sqrt(myRigid.gravityScale)),
                 ForceMode2D.Impulse);
         }
     }
@@ -184,7 +254,7 @@ public class SpeedBoyMovement : MonoBehaviour
         {
             // Add Jump force holding
             myRigid.AddForce(
-                Vector2.up * jumpForceHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)),
+                Vector2.up * forceJumpHoldingBonus * (float)(Math.Sqrt(myRigid.gravityScale)),
                 ForceMode2D.Impulse);
         }
 
@@ -208,7 +278,9 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void AutoRun()
     {
-        myRigid.velocity = new Vector2(runSpeed * IsFacingRightDirection, myRigid.velocity.y);
+        myRigid.velocity = new Vector2(
+            Mathf.Max(Mathf.Abs(runSpeed) , Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection, 
+            myRigid.velocity.y);
     }
     private void StopRun()
     {
@@ -216,10 +288,31 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void CheckTouchWall()
     {
+        // Check Middle
         var rightHit = RayCast(transform.position, Vector2.right, maxDistanceCheckTouchWallRight, groundMask);
         var leftHit = RayCast(transform.position, Vector2.left, maxDistanceCheckTouchWallLeft, groundMask);
-       
-        isTouchingWall = rightHit || leftHit;
+
+        // Check Top
+        var topRightHit = RayCast(
+            (Vector2)transform.position + new Vector2(0, myCollider.size.y / 2), 
+            Vector2.right, 
+            maxDistanceCheckTouchWallRight, groundMask);
+        var topLeftHit = RayCast(
+            (Vector2)transform.position + new Vector2(0, myCollider.size.y / 2),
+            Vector2.left,
+            maxDistanceCheckTouchWallRight, groundMask);
+
+        // Check Bottom
+        var bottomRightHit = RayCast(
+            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2),
+            Vector2.right,
+            maxDistanceCheckTouchWallRight, groundMask);
+        var bottomLeftHit = RayCast(
+            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2),
+            Vector2.left,
+            maxDistanceCheckTouchWallRight, groundMask);
+
+        isTouchingWall = rightHit || leftHit || topLeftHit || topRightHit || bottomLeftHit || bottomRightHit;
 
         if (isTouchingWall)
         {
@@ -259,10 +352,12 @@ public class SpeedBoyMovement : MonoBehaviour
 }
 
 enum State
-{   
+{
+    RUNNING,
     GROUND_JUMPING,
     WALL_SLICE,
     WALL_JUMPING,
+    PUNCHING
 }
 class SpeedBoyState
 {
@@ -276,12 +371,13 @@ class SpeedBoyState
             instance = new SpeedBoyState();
         return instance;
     }
-    
+
     // Properties
-    /*public bool Running { get; private set; }*/
+    public bool Running { get; private set; }
     public bool GroundJumping { get; private set; }
     public bool WallSlice { get; private set; }
     public bool WallJumping { get; private set; }
+    public bool Punching { get; private set; }
 
     // Methods
     public void SetState(State state)
@@ -289,20 +385,21 @@ class SpeedBoyState
         ResetState();
         switch (state)
         {
-            /*case State.RUN: Running = true; break;*/
+            case State.RUNNING: Running = true; break;
             case State.GROUND_JUMPING: GroundJumping = true; break;
             case State.WALL_SLICE: WallSlice = true; break;
             case State.WALL_JUMPING: WallJumping = true; break;
+            case State.PUNCHING: Punching = true; break;
         }
     }
 
     private void ResetState()
     {
-        /*Running = false;*/
+        Running = false;
         GroundJumping = false;
         WallSlice = false;
         WallJumping = false;
+        Punching = false;
     }
 }
-
 
