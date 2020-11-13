@@ -66,6 +66,7 @@ public class SpeedBoyMovement : MonoBehaviour
     private bool isWallSlice = false;
     private bool isPunchingAndDashing = false;
     private int punchingAndDashingCount = 0;
+    private float heigtEps = 0.02f; // This height for adjust check bottom hit between player vs wall
 
     private void Start()
     {
@@ -204,6 +205,7 @@ public class SpeedBoyMovement : MonoBehaviour
         {
             // Change Run Direction
             IsFacingRightDirection *= -1;
+            CheckAndFlipCharacter();
             // Set flag is Jumping to control time holding jump button
             isWallJumping = true;
             IsMidAir = true;
@@ -282,6 +284,15 @@ public class SpeedBoyMovement : MonoBehaviour
             Mathf.Max(Mathf.Abs(runSpeed) , Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection, 
             myRigid.velocity.y);
     }
+    private void CheckAndFlipCharacter()
+    {
+        Vector2 newScale = transform.localScale;
+        if(IsFacingRightDirection * newScale.x < 1)
+        {
+            newScale.x *= -1;
+        }
+        transform.localScale = newScale;
+    }
     private void StopRun()
     {
         myRigid.velocity = new Vector2(0f, myRigid.velocity.y);
@@ -304,11 +315,11 @@ public class SpeedBoyMovement : MonoBehaviour
 
         // Check Bottom
         var bottomRightHit = RayCast(
-            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2),
+            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2 - heigtEps),
             Vector2.right,
             maxDistanceCheckTouchWallRight, groundMask);
         var bottomLeftHit = RayCast(
-            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2),
+            (Vector2)transform.position - new Vector2(0, myCollider.size.y / 2 - heigtEps),
             Vector2.left,
             maxDistanceCheckTouchWallRight, groundMask);
 
@@ -322,11 +333,12 @@ public class SpeedBoyMovement : MonoBehaviour
         {
             myRigid.gravityScale = 1f;
         }
+
     }
     private void CheckOnGround()
     {
         var originPos = transform.position;
-        originPos.y -= myCollider.size.y / 2;
+        originPos.y -= (myCollider.size.y / 2 - heigtEps);
         var groundHit = RayCast(originPos, Vector2.down, maxDistanceCheckOnGround, groundMask);
         isOnGround = groundHit;
         if(isOnGround)
