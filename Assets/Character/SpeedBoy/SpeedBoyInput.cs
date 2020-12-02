@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class SpeedBoyInput : MonoBehaviour
 {
     public bool IsJumpHolding { get; private set; }
+    public bool IsPunchSliceHolding { get; private set; }
 
     private bool isReadyToClear = false;
 
@@ -23,13 +24,28 @@ public class SpeedBoyInput : MonoBehaviour
         {
             ResetInput();
         }
-        IsJumpHolding = IsJumpHolding || Input.GetButton("Jump");
+        /*IsJumpHolding = IsJumpHolding || Input.GetKey(KeyCode.W);*/
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            IsJumpHolding = true;
+        }
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            IsJumpHolding = false;
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            IsPunchSliceHolding = true;
+        }
+        if(Input.GetKeyUp(KeyCode.S))
+        {
+            IsPunchSliceHolding = false;
+        }
     }
 
     private void ResetInput()
     {
-        IsJumpHolding = false;
-
+        //IsJumpHolding = false;
         isReadyToClear = false;
     }
 }

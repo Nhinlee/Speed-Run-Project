@@ -52,6 +52,16 @@ public class SpeedBoyMovement : MonoBehaviour
     private float forceYBonusWhenDashing = 0.6f;
     private Coroutine coroutinePunchAndDash = null;
 
+    [Header("Punch Slice")]
+    [SerializeField]
+    private float forcePunchSlice = 10f;
+
+    [Header("Collider Size")]
+    [SerializeField]
+    private float sizeX = 0.45f;
+    [SerializeField]
+    private float sizeY = 0.5f;
+
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
     public bool IsMidAir { get; private set; }
@@ -65,6 +75,8 @@ public class SpeedBoyMovement : MonoBehaviour
     private SpeedBoyState speedBoyState;
     private bool isWallSlice = false;
     private bool isPunchingAndDashing = false;
+    private bool isPunchSlicing = false;
+    private int punchSliceCount = 0;
     private int punchingAndDashingCount = 0;
     private float heigtEps = 0.02f; // This height for adjust check bottom hit between player vs wall
 
@@ -77,21 +89,48 @@ public class SpeedBoyMovement : MonoBehaviour
         // Check Condition
         CheckOnGround();
         CheckTouchWall();
-        
+
         // Move----------------
         Run();
+        PunchSlice();
         //---------------------
         SpecialMove();
         ResetDashingCount();
         //Debug.Log($"Running: {speedBoyState.Running}");
-        //Debug.Log($"GroundJumping: {speedBoyState.GroundJumping}");
+        //Debug.Log($"Mid air: {speedBoyState.MidAir}");
         //Debug.Log($"WallSlice: {speedBoyState.WallSlice}");
         //Debug.Log($"WallJumping: {speedBoyState.WallJumping}");
         //Debug.Log($"Punching: {speedBoyState.Punching}");
+        //Debug.Log($"Slicing: {speedBoyState.PunchSlice}");
 
         // Set state of SpeedBoyState Instance
         SetSpeedBoyState();
+    }
 
+    private void PunchSlice()
+    {
+        if (!isTouchingWall)
+        {
+            isPunchSlicing = myCustomInput.IsPunchSliceHolding;
+            // Reset Punch Slicing
+            if (isPunchSlicing)
+            {
+                if (!isOnGround && punchSliceCount == 0)
+                {
+                    myRigid.AddForce(Vector2.down * forcePunchSlice, ForceMode2D.Impulse);
+                    punchSliceCount++;
+                }
+                // set size when punch slicing
+                myCollider.size = new Vector2(sizeX, sizeY / 2);
+            }
+            else
+            {
+                // reset size
+                myCollider.size = new Vector2(sizeX, sizeY);
+                // reset counter
+                punchSliceCount = 0;
+            }
+        }
     }
 
     private void ResetDashingCount()
@@ -106,13 +145,13 @@ public class SpeedBoyMovement : MonoBehaviour
     {
         // Transition from Ground Jumping to WallSlice 
         //(Đang nhảy mà chạm tường thì sẽ cộng thêm 1 lực nhất định -> character trượt lên một đoạn nhỏ)
-        if(!isOnGround && speedBoyState.GroundJumping && isTouchingWall)
+        if (!isOnGround && (speedBoyState.GroundJumping || speedBoyState.MidAir) && isTouchingWall)
         {
             var oldYVelocity = myRigid.velocity.y;
 
             myRigid.velocity = new Vector2(myRigid.velocity.x, 0f);
 
-            if(oldYVelocity > 0)
+            if (oldYVelocity > 0)
             {
                 myRigid.AddForce(
                 Vector2.up * forceJumpBonusWhenTouchingWall * (float)(Math.Sqrt(myRigid.gravityScale)),
@@ -120,35 +159,47 @@ public class SpeedBoyMovement : MonoBehaviour
             }
         }
         // Transition from Walljumping to WallSlice (Chạm tường)
-        if((speedBoyState.WallJumping || speedBoyState.Punching) && isTouchingWall)
+        if ((speedBoyState.WallJumping || speedBoyState.Punching) && isTouchingWall)
         {
             myRigid.velocity = new Vector2(myRigid.velocity.x, 0f);
         }
-        
+
     }
 
     private void SetSpeedBoyState()
     {
-        if(isTouchingWall)
+        // Order is important -> maybe bad code but ... :((
+        if (isTouchingWall)
         {
             speedBoyState.SetState(State.WALL_SLICE);
+            return;
         }
-        if(!isTouchingWall && isWallJumping)
+        if (isPunchSlicing)
         {
-            speedBoyState.SetState(State.WALL_JUMPING);
+            speedBoyState.SetState(State.PUNCHSLICE);
+            return;
         }
-        if(isGroundJumping)
-        {
-            speedBoyState.SetState(State.GROUND_JUMPING);
-        }
-        if (!isTouchingWall && isPunchingAndDashing)
-        {
-            speedBoyState.SetState(State.PUNCHING);
-        }
-        if(isOnGround && !isTouchingWall)
+        if (isOnGround)
         {
             speedBoyState.SetState(State.RUNNING);
+            return;
         }
+        if (isPunchingAndDashing)
+        {
+            speedBoyState.SetState(State.PUNCHING);
+            return;
+        }
+        if (isWallJumping)
+        {
+            speedBoyState.SetState(State.WALL_JUMPING);
+            return;
+        }
+        if (isGroundJumping)
+        {
+            speedBoyState.SetState(State.GROUND_JUMPING);
+            return;
+        }
+        speedBoyState.SetState(State.MIDAIR);
     }
 
     private void FixedUpdate()
@@ -167,23 +218,25 @@ public class SpeedBoyMovement : MonoBehaviour
 
     public void OnPunch()
     {
-        if(!isOnGround 
-            && !isTouchingWall 
-            && punchingAndDashingCount < 1 
+        if (!isOnGround
+            && !isTouchingWall
+            && punchingAndDashingCount < 1
             && !isPunchingAndDashing)
         {
             isPunchingAndDashing = true;
             punchingAndDashingCount++;
-            if(coroutinePunchAndDash != null)
+            if (coroutinePunchAndDash != null)
                 StopCoroutine(coroutinePunchAndDash);
             coroutinePunchAndDash = StartCoroutine(CoroutinePunchAndDash());
         }
     }
 
+
+
     private IEnumerator CoroutinePunchAndDash()
     {
         Vector2 startPosition = transform.position;
-        while(
+        while (
             Mathf.Abs(startPosition.x - transform.position.x) < maxDistancePunchAndDash
             && !isTouchingWall)
         {
@@ -195,13 +248,18 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void InitValue()
     {
+        // Init mycollider size
+        myCollider.size = new Vector2(sizeX, sizeY);
+        // Init distance check touching wall
         maxDistanceCheckTouchWallRight = maxDistanceCheckTouchWallLeft = myCollider.size.x / 2 + 0.15f;
+        //
         IsFacingRightDirection = 1;
+        // Get Speedboy state
         speedBoyState = SpeedBoyState.GetInstance();
     }
     private void WallJump()
     {
-        if(isTouchingWall && !isOnGround && !isWallJumping)
+        if (isTouchingWall && !isOnGround && !isWallJumping)
         {
             // Change Run Direction
             IsFacingRightDirection *= -1;
@@ -221,7 +279,6 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void WallSlice()
     {
-        
         if (isOnGround && !isWallSlice && isTouchingWall)
         {
             // Set flag is Jumping to control time holding jump button
@@ -237,7 +294,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void GroundJump()
     {
-        if(isOnGround && !isGroundJumping && !isTouchingWall)
+        if (isOnGround && !isGroundJumping && !isTouchingWall)
         {
             // Set flag is Jumping to control time holding jump button
             isGroundJumping = true;
@@ -281,13 +338,13 @@ public class SpeedBoyMovement : MonoBehaviour
     private void AutoRun()
     {
         myRigid.velocity = new Vector2(
-            Mathf.Max(Mathf.Abs(runSpeed) , Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection, 
+            Mathf.Max(Mathf.Abs(runSpeed), Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection,
             myRigid.velocity.y);
     }
     private void CheckAndFlipCharacter()
     {
         Vector2 newScale = transform.localScale;
-        if(IsFacingRightDirection * newScale.x < 1)
+        if (IsFacingRightDirection * newScale.x < 1)
         {
             newScale.x *= -1;
         }
@@ -305,8 +362,8 @@ public class SpeedBoyMovement : MonoBehaviour
 
         // Check Top
         var topRightHit = RayCast(
-            (Vector2)transform.position + new Vector2(0, myCollider.size.y / 2), 
-            Vector2.right, 
+            (Vector2)transform.position + new Vector2(0, myCollider.size.y / 2),
+            Vector2.right,
             maxDistanceCheckTouchWallRight, groundMask);
         var topLeftHit = RayCast(
             (Vector2)transform.position + new Vector2(0, myCollider.size.y / 2),
@@ -341,10 +398,10 @@ public class SpeedBoyMovement : MonoBehaviour
         originPos.y -= (myCollider.size.y / 2 - heigtEps);
         var groundHit = RayCast(originPos, Vector2.down, maxDistanceCheckOnGround, groundMask);
         isOnGround = groundHit;
-        if(isOnGround)
+        if (isOnGround)
         {
             IsMidAir = false;
-        }    
+        }
     }
     private RaycastHit2D RayCast(Vector2 pos, Vector2 direction, float length, LayerMask mask)
     {
@@ -369,19 +426,21 @@ enum State
     GROUND_JUMPING,
     WALL_SLICE,
     WALL_JUMPING,
-    PUNCHING
+    PUNCHING,
+    MIDAIR,
+    PUNCHSLICE,
 }
 class SpeedBoyState
 {
     // Singleton
     protected SpeedBoyState() { }
 
-    private static SpeedBoyState instance = null;
+    private static SpeedBoyState _instance = null;
     public static SpeedBoyState GetInstance()
     {
-        if (instance == null)
-            instance = new SpeedBoyState();
-        return instance;
+        if (_instance == null)
+            _instance = new SpeedBoyState();
+        return _instance;
     }
 
     // Properties
@@ -390,6 +449,8 @@ class SpeedBoyState
     public bool WallSlice { get; private set; }
     public bool WallJumping { get; private set; }
     public bool Punching { get; private set; }
+    public bool MidAir { get; private set; }
+    public bool PunchSlice { get; private set; }
 
     // Methods
     public void SetState(State state)
@@ -402,6 +463,8 @@ class SpeedBoyState
             case State.WALL_SLICE: WallSlice = true; break;
             case State.WALL_JUMPING: WallJumping = true; break;
             case State.PUNCHING: Punching = true; break;
+            case State.MIDAIR: MidAir = true; break;
+            case State.PUNCHSLICE: PunchSlice = true; break;
         }
     }
 
@@ -412,6 +475,8 @@ class SpeedBoyState
         WallSlice = false;
         WallJumping = false;
         Punching = false;
+        MidAir = false;
+        PunchSlice = false;
     }
 }
 

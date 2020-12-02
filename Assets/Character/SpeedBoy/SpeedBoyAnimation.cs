@@ -9,7 +9,14 @@ public class SpeedBoyAnimation : MonoBehaviour
     private Animator myAnimator;
     [SerializeField]
     private SpeedBoyMovement myMovement;
-        
+
+    [SerializeField]
+    private GameObject animRoot;
+    [SerializeField]
+    private ParticleSystem cloakEffect;
+    [SerializeField]
+    private ParticleSystem dasingEffect;
+
     private int hashParamIsAutoRunLeft;
     private int hashParamIsAutoRunRight;
     private int hashParamIsJumping;
@@ -28,11 +35,17 @@ public class SpeedBoyAnimation : MonoBehaviour
         ResetParams();
         myAnimator.SetBool(hashParamIsAutoRunRight, myMovement.IsFacingRightDirection == 1);
         myAnimator.SetBool(hashParamIsAutoRunLeft, myMovement.IsFacingRightDirection == -1);
-        if(myMovement.IsMidAir)
+        if (myMovement.IsMidAir)
         {
             ResetParams();
             myAnimator.SetBool(hashParamIsJumping, myMovement.IsMidAir);
         }
+        // Update effect and anim root
+        var speedBoyState = SpeedBoyState.GetInstance();
+        dasingEffect.gameObject.SetActive(speedBoyState.PunchSlice || speedBoyState.Punching);
+        cloakEffect.gameObject.SetActive(!speedBoyState.PunchSlice && !speedBoyState.Punching);
+        animRoot.SetActive(!speedBoyState.PunchSlice && !speedBoyState.Punching);
+
     }
 
     private void ResetParams()
