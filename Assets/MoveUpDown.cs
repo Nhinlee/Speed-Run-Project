@@ -22,7 +22,7 @@ public class MoveUpDown : MonoBehaviour
         {
             float y;
             y = oneSpike.transform.position.y;    
-            if (y >= minHight || y <= maxHight) direction *= -1;          
+            if (y <= minHight || y >= maxHight) direction *= -1;          
         }
         foreach (GameObject oneSpike in spike)
         {
