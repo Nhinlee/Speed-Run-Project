@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5490169320111357477}
   - component: {fileID: 5490169320111357478}
   - component: {fileID: 5490169320111357479}
+  - component: {fileID: 2092491500674559866}
+  - component: {fileID: 2467526128714008436}
   m_Layer: 7
   m_Name: Saw
   m_TagString: Untagged
@@ -74,7 +76,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 57c3732a7b5f6f74e9f6886b275f6b6e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -115,3 +117,36 @@ CircleCollider2D:
   m_Offset: {x: 0.0056294203, y: 0.0018764734}
   serializedVersion: 2
   m_Radius: 1.65
+--- !u!50 &2092491500674559866
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490169320111357483}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &2467526128714008436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490169320111357483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc607a7c4fca614a9b7ad16f6162ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

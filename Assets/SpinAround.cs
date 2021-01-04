@@ -8,8 +8,8 @@ public class SpinAround : MonoBehaviour
     [SerializeField]
     [Tooltip("speed is 0 up to 180 degree persecond")]
     [Range(20, 180)]
-    private int spinningSpeed;
-    [SerializeField] [Range(-1, 1)] private int direction;
+    private float spinningSpeed = 90f;
+    [SerializeField] [Range(-1, 1)] private int direction = 1;
     private Vector3 d;
     private void Start()
     {
