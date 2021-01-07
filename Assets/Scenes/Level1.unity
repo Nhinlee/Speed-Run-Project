@@ -352,10 +352,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CanvasCowndownTimer
       objectReference: {fileID: 0}
-    - target: {fileID: 3661616220078452414, guid: 0d63d7707d3d92342a0c34f0dac0f0f5, type: 3}
-      propertyPath: timer
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 3661616220078452415, guid: 0d63d7707d3d92342a0c34f0dac0f0f5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

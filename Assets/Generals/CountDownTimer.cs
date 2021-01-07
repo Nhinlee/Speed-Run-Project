@@ -24,7 +24,7 @@ public class CountDownTimer : MonoBehaviour
     {
         int countdownTimer = timer;
 
-        while(countdownTimer > 1)
+        while(countdownTimer > 0)
         {
             txtCountDownNumber.text = countdownTimer.ToString();
             yield return new WaitForSeconds(1);
