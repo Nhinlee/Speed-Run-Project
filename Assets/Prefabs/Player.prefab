@@ -9780,6 +9780,7 @@ MonoBehaviour:
   forcePunchSlice: 10
   sizeX: 0.45
   sizeY: 0.5
+  countDownTimer: {fileID: 0}
 --- !u!114 &5139614541051870945
 MonoBehaviour:
   m_ObjectHideFlags: 0

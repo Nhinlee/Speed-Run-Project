@@ -62,6 +62,10 @@ public class SpeedBoyMovement : MonoBehaviour
     [SerializeField]
     private float sizeY = 0.5f;
 
+    [Header("UI Reference")]
+    [SerializeField]
+    private CountDownTimer countDownTimer;
+
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
     public bool IsMidAir { get; private set; }
@@ -248,6 +252,9 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void InitValue()
     {
+        this.runSpeed = 0f;
+        // Init Countdown Timer
+        countDownTimer.onFinishCountdown += StartRun;
         // Init mycollider size
         myCollider.size = new Vector2(sizeX, sizeY);
         // Init distance check touching wall
@@ -257,6 +264,13 @@ public class SpeedBoyMovement : MonoBehaviour
         // Get Speedboy state
         speedBoyState = SpeedBoyState.GetInstance();
     }
+
+    private void StartRun()
+    {
+        // TODO: Refactor this hard code
+        runSpeed = 7.5f;
+    }
+
     private void WallJump()
     {
         if (isTouchingWall && !isOnGround && !isWallJumping)
