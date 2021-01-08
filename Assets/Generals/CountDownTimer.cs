@@ -14,8 +14,8 @@ public class CountDownTimer : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI txtCountDownNumber;
-    // Start is called before the first frame update
-    void Start()
+
+    public void StartCountDown()
     {
         StartCoroutine(CoroutineStartCountdown());
     }
@@ -37,9 +37,4 @@ public class CountDownTimer : MonoBehaviour
         onFinishCountdown?.Invoke();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -69,6 +69,7 @@ public class SpeedBoyMovement : MonoBehaviour
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
     public bool IsMidAir { get; private set; }
+    public bool IsRunning { get; set; }
 
     // Private Flag to control behavior of speedboy
     private bool isDrawRayCast = true;
@@ -235,8 +236,6 @@ public class SpeedBoyMovement : MonoBehaviour
         }
     }
 
-
-
     private IEnumerator CoroutinePunchAndDash()
     {
         Vector2 startPosition = transform.position;
@@ -264,13 +263,12 @@ public class SpeedBoyMovement : MonoBehaviour
         // Get Speedboy state
         speedBoyState = SpeedBoyState.GetInstance();
     }
-
     private void StartRun()
     {
         // TODO: Refactor this hard code
         runSpeed = 7.5f;
+        IsRunning = true;
     }
-
     private void WallJump()
     {
         if (isTouchingWall && !isOnGround && !isWallJumping)
@@ -340,7 +338,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void Run()
     {
-        if (isTouchingWall && !isWallJumping)
+        if ((isTouchingWall && !isWallJumping) || !IsRunning)
         {
             StopRun();
         }
@@ -357,6 +355,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void CheckAndFlipCharacter()
     {
+
         Vector2 newScale = transform.localScale;
         if (IsFacingRightDirection * newScale.x < 1)
         {
@@ -431,6 +430,12 @@ public class SpeedBoyMovement : MonoBehaviour
         }
 
         return hit;
+    }
+    public void CombackToResetPoint(Vector2 resetPos, int facingDirection)
+    {
+        this.transform.position = resetPos;
+        this.IsFacingRightDirection = facingDirection;
+        CheckAndFlipCharacter();
     }
 }
 

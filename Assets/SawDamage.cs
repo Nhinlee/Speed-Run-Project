@@ -11,7 +11,7 @@ public class SawDamage : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+            SpeedBoyController playerController = collision.gameObject.GetComponent<SpeedBoyController>();
             playerController.Die();
         }
     }   
