@@ -19,7 +19,7 @@ TagManager:
   - Spike
   - Key
   - Axis
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -51,6 +51,9 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 2630748643
+    locked: 0
+  - name: Enemy
+    uniqueID: 441589577
     locked: 0
   - name: Player
     uniqueID: 2392147015

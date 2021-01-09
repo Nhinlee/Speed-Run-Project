@@ -4777,7 +4777,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1902820281
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0
@@ -9581,7 +9581,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1902820281
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 1
   m_RenderMode: 0
   m_SortMode: 0
@@ -9625,6 +9625,7 @@ GameObject:
   - component: {fileID: 5139614541051870946}
   - component: {fileID: 5139614541051870944}
   - component: {fileID: 5139614541051870943}
+  - component: {fileID: 105295230}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -9697,7 +9698,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &5139614541051870939
@@ -9891,6 +9892,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a4dc3fafe4e984394ad545de801b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &105295230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139614541051870937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 485233d11b866a74a8bc477f6d1b223a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeDelayBeforeDie: 1
+  speedBoyAnimation: {fileID: 5139614541051870945}
+  speedBoyMovement: {fileID: 5139614541051870942}
 --- !u!1001 &8063202695161241625
 PrefabInstance:
   m_ObjectHideFlags: 0
