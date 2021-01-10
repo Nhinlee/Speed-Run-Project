@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SawSystem : MonoBehaviour
+public class MoveSystem : MonoBehaviour
 {
     [SerializeField]
     private List<Transform> path;
@@ -15,6 +15,9 @@ public class SawSystem : MonoBehaviour
     [Tooltip("This stand for player touch and activate saw system")]
     private SawActivator activator;
 
+    [SerializeField]
+    private bool IsLoop;
+
     private int nextDestinatePointIndex;
     private float radiusGizmosSphere = 0.2f;
 
@@ -26,6 +29,11 @@ public class SawSystem : MonoBehaviour
         if(activator!= null)
         {
             activator.onActivated += Activate;
+        }
+        // is Loop mode
+        if(IsLoop)
+        {
+            Activate();
         }
     }
 
@@ -56,6 +64,10 @@ public class SawSystem : MonoBehaviour
     
     public void Activate()
     {
+        if (IsLoop && nextDestinatePointIndex == path.Count)
+        {
+            nextDestinatePointIndex = 0;
+        }
         MoveToNextPosition();
     }
 
@@ -68,7 +80,7 @@ public class SawSystem : MonoBehaviour
             {"position", path[nextDestinatePointIndex]},
             {"speed", speeds[nextDestinatePointIndex] },
             {"easetype", iTween.EaseType.linear },
-            {"oncomplete", "MoveToNextPosition"},
+            {"oncomplete", "Activate"},
             {"ignoretimescale", true },
         };
         nextDestinatePointIndex++;
