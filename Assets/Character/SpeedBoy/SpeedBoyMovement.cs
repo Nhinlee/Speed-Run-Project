@@ -261,7 +261,7 @@ public class SpeedBoyMovement : MonoBehaviour
         //
         IsFacingRightDirection = 1;
         // Get Speedboy state
-        speedBoyState = SpeedBoyState.GetInstance();
+        speedBoyState = SpeedBoyState.Instance;
     }
     private void StartRun()
     {
@@ -452,15 +452,10 @@ enum State
 class SpeedBoyState
 {
     // Singleton
-    protected SpeedBoyState() { }
+    private SpeedBoyState() { }
 
-    private static SpeedBoyState _instance = null;
-    public static SpeedBoyState GetInstance()
-    {
-        if (_instance == null)
-            _instance = new SpeedBoyState();
-        return _instance;
-    }
+    private static SpeedBoyState _instance = new SpeedBoyState();
+    public static SpeedBoyState Instance { get => _instance; }
 
     // Properties
     public bool Running { get; private set; }

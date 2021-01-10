@@ -11,6 +11,7 @@ public class MoveSystem : MonoBehaviour
     [Tooltip("nums of speed element = nums of point in path above")]
     private List<float> speeds;
 
+
     [SerializeField]
     [Tooltip("This stand for player touch and activate saw system")]
     private SawActivator activator;
@@ -34,15 +35,6 @@ public class MoveSystem : MonoBehaviour
         if(IsLoop)
         {
             Activate();
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            SpeedBoyController playerController = collision.gameObject.GetComponent<SpeedBoyController>();
-            playerController.Die();
         }
     }
 
