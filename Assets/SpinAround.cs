@@ -4,30 +4,22 @@ using UnityEngine;
 
 public class SpinAround : MonoBehaviour
 {
-    [SerializeField] private GameObject target;
     [SerializeField]
     [Tooltip("speed is 0 up to 180 degree persecond")]
-    [Range(20, 180)]
+    [Range(20, 720)]
     private float spinningSpeed = 90f;
-    [SerializeField] [Range(-1, 1)] private int direction = 1;
-    private Vector3 d;
-    private void Start()
-    {
-        if (direction == -1)
-        {
-            d = new Vector3(1, 0, 0);
-        }
-        if(direction == 0)
-        {
-            d = new Vector3(0, 1, 0);
-        }
-        if(direction == 1)
-        {
-            d = new Vector3(0, 0, 1);
-        }
-    }
+    [SerializeField]
+    private bool isSpinRightDirection;
+    
     void Update()
     {
-        transform.RotateAround(target.transform.position, d, spinningSpeed * Time.deltaTime);
+        if (isSpinRightDirection)
+        {
+            transform.RotateAround(transform.position, Vector3.back, spinningSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.RotateAround(transform.position, Vector3.forward, spinningSpeed * Time.deltaTime);
+        }
     }
 }
