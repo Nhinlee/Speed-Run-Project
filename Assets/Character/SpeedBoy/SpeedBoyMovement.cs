@@ -25,6 +25,7 @@ public class SpeedBoyMovement : MonoBehaviour
     [Header("Horizontal Field")]
     [SerializeField]
     private float runSpeed;
+    private float currentRunSpeed;
 
     [Header("Check On Ground")]
     [SerializeField]
@@ -251,7 +252,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void InitValue()
     {
-        this.runSpeed = 0f;
+        currentRunSpeed = 0f;
         // Init Countdown Timer
         countDownTimer.onFinishCountdown += StartRun;
         // Init mycollider size
@@ -265,8 +266,7 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void StartRun()
     {
-        // TODO: Refactor this hard code
-        runSpeed = 7.5f;
+        currentRunSpeed = runSpeed;
         IsRunning = true;
     }
     private void WallJump()
@@ -350,7 +350,7 @@ public class SpeedBoyMovement : MonoBehaviour
     private void AutoRun()
     {
         myRigid.velocity = new Vector2(
-            Mathf.Max(Mathf.Abs(runSpeed), Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection,
+            Mathf.Max(Mathf.Abs(currentRunSpeed), Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection,
             myRigid.velocity.y);
     }
     private void CheckAndFlipCharacter()

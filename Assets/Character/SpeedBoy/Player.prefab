@@ -4758,7 +4758,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9562,7 +9562,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9661,7 +9661,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.026557446, y: 0.01153934}
+  m_Offset: {x: -0.03, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -9672,7 +9672,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.42236423, y: 0.48241353}
+  m_Size: {x: 0.45, y: 0.45}
   m_EdgeRadius: 0
 --- !u!50 &5139614541051870938
 Rigidbody2D:
@@ -9713,7 +9713,7 @@ MonoBehaviour:
   forceJump: 10
   forceJumpHoldingBonus: 0.45
   intervalJumpHolding: 0.2
-  runSpeed: 8
+  runSpeed: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -9727,7 +9727,7 @@ MonoBehaviour:
   forceYBonusWhenDashing: 0.6
   forcePunchSlice: 10
   sizeX: 0.45
-  sizeY: 0.5
+  sizeY: 0.45
   countDownTimer: {fileID: 0}
 --- !u!114 &5139614541051870946
 MonoBehaviour:
@@ -9815,11 +9815,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 491aa152490303f4b9c536f90c037c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeDelayBeforeDie: 1
+  timeDelayBeforeDie: 1.5
   speedBoyMovement: {fileID: 5139614541051870942}
-  deadEffect: {fileID: 7617031812461479572}
-  animRoot: {fileID: 6179825487635830886}
   myAnimator: {fileID: 6179825487635830884}
+  animRoot: {fileID: 6179825487635830886}
+  deadEffect: {fileID: 7617031812461479572}
   cloakEffect: {fileID: 7492683090926415731}
   dasingEffect: {fileID: 1443665068316488079}
 --- !u!1001 &8063202695161241625
@@ -9909,6 +9909,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BlueDeadEffect
       objectReference: {fileID: 0}
+    - target: {fileID: 1418823082258179045, guid: ea18bf9a2e898e942a6453f03915ab24, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 1418823082258179046, guid: ea18bf9a2e898e942a6453f03915ab24, type: 3}
       propertyPath: moveWithTransform
       value: 1

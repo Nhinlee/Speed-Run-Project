@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5490169320111357479}
   - component: {fileID: 2092491500674559866}
   - component: {fileID: 1400785985}
+  - component: {fileID: 7520134049311639916}
   m_Layer: 7
   m_Name: Saw
   m_TagString: Untagged
@@ -115,7 +116,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.7
+  m_Radius: 1.5
 --- !u!50 &2092491500674559866
 Rigidbody2D:
   serializedVersion: 4
@@ -152,3 +153,16 @@ MonoBehaviour:
   path: []
   speeds: []
   activator: {fileID: 0}
+  IsLoop: 0
+--- !u!114 &7520134049311639916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490169320111357483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d249399b2308ff41b20f42c67595331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

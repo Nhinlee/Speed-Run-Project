@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SpeedBoyController : MonoBehaviour, ICharacter
 {
     [SerializeField]
-    private int timeDelayBeforeDie;
+    private float timeDelayBeforeDie;
 
     [Header("Reference Component")]
     [SerializeField]
