@@ -1159,7 +1159,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3124402472434364052}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.12, y: -0.25999996, z: -2}
+  m_LocalPosition: {x: -8.693967, y: -1.120038, z: 158.83765}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3124402472774928825}
@@ -1360,7 +1360,8 @@ MonoBehaviour:
   m_AnimatedTarget: {fileID: 0}
   m_LayerIndex: 0
   m_ShowDebugText: 0
-  m_ChildCameras: []
+  m_ChildCameras:
+  - {fileID: 3124402472434364053}
   m_Instructions:
   - m_FullHash: -650501918
     m_VirtualCamera: {fileID: 3124402472434364053}
@@ -1376,13 +1377,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   m_CustomBlends: {fileID: 0}
-  m_ParentHash:
-  - m_Hash: 173887777
-    m_ParentHash: 756556552
-  - m_Hash: -1145391466
-    m_ParentHash: 756556552
-  - m_Hash: -650501918
-    m_ParentHash: 756556552
+  m_ParentHash: []
 --- !u!1 &3985010039625762622
 GameObject:
   m_ObjectHideFlags: 0

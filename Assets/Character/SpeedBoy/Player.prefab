@@ -9713,7 +9713,7 @@ MonoBehaviour:
   forceJump: 10
   forceJumpHoldingBonus: 0.45
   intervalJumpHolding: 0.2
-  runSpeed: 0
+  runSpeed: 7.5
   groundMask:
     serializedVersion: 2
     m_Bits: 64
