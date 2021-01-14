@@ -17,7 +17,7 @@ public class ResetPoint : MonoBehaviour
                 //
                 speedBoyController.ResetPointPosition = this.transform.position;
                 speedBoyController.SaveFacingDirection = speedBoyMovement.IsFacingRightDirection;
-                Debug.Log(speedBoyMovement.IsFacingRightDirection);
+                Destroy(gameObject);
             }
             catch (System.Exception e)
             {

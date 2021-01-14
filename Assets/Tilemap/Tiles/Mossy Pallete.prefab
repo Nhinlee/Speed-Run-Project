@@ -171,6 +171,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -1, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 13
+      m_TileSpriteIndex: 4
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741826
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 1
@@ -199,6 +209,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: d6169a622cedccb498944cbdd1677dc1, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: ed7d181ecb313ea429702335ea603df5, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 61f5eeb3f33d3154cb64fe3fd11e0984, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: 6928388786959331256, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
@@ -208,7 +220,7 @@ Tilemap:
     m_Data: {fileID: -5249700988863797070, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -8013599348960855253, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: 7789460486736427789, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -2891453398403303555, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
@@ -227,7 +239,7 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 7780190520650127750, guid: a23cf708d255ba447916f455ea06cfca, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 13
+  - m_RefCount: 14
     m_Data:
       e00: 1
       e01: 0
@@ -246,15 +258,15 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 13
+  - m_RefCount: 14
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   - m_RefCount: 0
     m_Data: {r: 0, g: 0, b: 0, a: 0}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: -1, y: -1, z: 0}
-  m_Size: {x: 3, y: 5, z: 1}
+  m_Origin: {x: -1, y: -2, z: 0}
+  m_Size: {x: 4, y: 8, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -333,7 +345,7 @@ GameObject:
   - component: {fileID: 4319555443056544472}
   - component: {fileID: 5700623700458008209}
   m_Layer: 31
-  m_Name: Mosst Pallete
+  m_Name: Mossy Pallete
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,7 +378,7 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &1465948169337374701
+--- !u!114 &3622293599823096624
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
