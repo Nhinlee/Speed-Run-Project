@@ -38,7 +38,7 @@ public class SpeedBoyController : MonoBehaviour, ICharacter
     // Private fields
     private Coroutine coroutineWaitingToDie;
 
-    private void Awake()
+    /*private void Awake()
     {
         int numberObject = FindObjectsOfType<SpeedBoyController>().Length;
         if (numberObject > 1)
@@ -49,7 +49,7 @@ public class SpeedBoyController : MonoBehaviour, ICharacter
         {
             DontDestroyOnLoad(gameObject);
         }
-    }
+    }*/
 
     private void Start()
     {
