@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Saw : MonoBehaviour
+public class Damage : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            SpeedBoyController playerController = collision.gameObject.GetComponent<SpeedBoyController>();
-            playerController.Die();
+            SpeedBoyController speedBoyController = collision.gameObject.GetComponent<SpeedBoyController>();
+            speedBoyController.Die();
         }
     }
 
