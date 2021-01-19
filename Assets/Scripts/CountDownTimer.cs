@@ -34,7 +34,11 @@ public class CountDownTimer : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         txtCountDownNumber.text = "";
+
         onFinishCountdown?.Invoke();
+
+        // Play Music
+        AudioManager.Instance.PlayMapBackgroundMusic();
     }
 
 }
