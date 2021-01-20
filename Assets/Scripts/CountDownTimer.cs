@@ -38,7 +38,7 @@ public class CountDownTimer : MonoBehaviour
         onFinishCountdown?.Invoke();
 
         // Play Music
-        AudioManager.Instance.PlayMapBackgroundMusic();
+        //AudioManager.Instance.PlayMapBackgroundMusic();
     }
 
 }
