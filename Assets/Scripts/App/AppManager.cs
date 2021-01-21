@@ -35,15 +35,6 @@ public class AppManager : MonoBehaviour
         //
     }
 
-    private void Update()
-    {
-        // This is just for testing porpuse
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            GameLoader.Instance.LoadMapScene();
-            AudioManager.Instance.PlayStartGameMusic();
-        }
-    }
 }
 
 

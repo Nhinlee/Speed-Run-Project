@@ -25,7 +25,6 @@ public class SpeedBoyMovement : MonoBehaviour
     [Header("Horizontal Field")]
     [SerializeField]
     private float runSpeed;
-    private float currentRunSpeed;
 
     [Header("Check On Ground")]
     [SerializeField]
@@ -63,14 +62,10 @@ public class SpeedBoyMovement : MonoBehaviour
     [SerializeField]
     private float sizeY = 0.5f;
 
-    [Header("UI Reference")]
-    [SerializeField]
-    private CountDownTimer countDownTimer;
-
     // Property to control animation
     public int IsFacingRightDirection { get; private set; }
     public bool IsMidAir { get; private set; }
-    public bool IsRunning { get; set; }
+    public bool IsRunning { get; private set; }
 
     // Private Flag to control behavior of speedboy
     private bool isDrawRayCast = true;
@@ -97,7 +92,7 @@ public class SpeedBoyMovement : MonoBehaviour
         CheckTouchWall();
 
         // Move----------------
-        Run();
+        AutoRun();
         PunchSlice();
         //---------------------
         SpecialMove();
@@ -252,9 +247,6 @@ public class SpeedBoyMovement : MonoBehaviour
     }
     private void InitValue()
     {
-        currentRunSpeed = 0f;
-        // Init Countdown Timer
-        countDownTimer.onFinishCountdown += StartRun;
         // Init mycollider size
         myCollider.size = new Vector2(sizeX, sizeY);
         // Init distance check touching wall
@@ -264,10 +256,13 @@ public class SpeedBoyMovement : MonoBehaviour
         // Get Speedboy state
         speedBoyState = SpeedBoyState.Instance;
     }
-    private void StartRun()
+    public void StartRun()
     {
-        currentRunSpeed = runSpeed;
         IsRunning = true;
+    }
+    public void StopRun()
+    {
+        IsRunning = false;
     }
     private void WallJump()
     {
@@ -336,22 +331,18 @@ public class SpeedBoyMovement : MonoBehaviour
             isWallSlice = false;
         }
     }
-    private void Run()
+    private void AutoRun()
     {
         if ((isTouchingWall && !isWallJumping) || !IsRunning)
         {
-            StopRun();
+            myRigid.velocity = new Vector2(0f, myRigid.velocity.y);
         }
         else
         {
-            AutoRun();
-        }
-    }
-    private void AutoRun()
-    {
-        myRigid.velocity = new Vector2(
-            Mathf.Max(Mathf.Abs(currentRunSpeed), Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection,
+            myRigid.velocity = new Vector2(
+            Mathf.Max(Mathf.Abs(runSpeed), Mathf.Abs(myRigid.velocity.x)) * IsFacingRightDirection,
             myRigid.velocity.y);
+        }
     }
     private void CheckAndFlipCharacter()
     {
@@ -362,10 +353,6 @@ public class SpeedBoyMovement : MonoBehaviour
             newScale.x *= -1;
         }
         transform.localScale = newScale;
-    }
-    private void StopRun()
-    {
-        myRigid.velocity = new Vector2(0f, myRigid.velocity.y);
     }
     private void CheckTouchWall()
     {

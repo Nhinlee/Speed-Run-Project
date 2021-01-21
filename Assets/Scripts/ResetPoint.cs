@@ -12,6 +12,8 @@ public class ResetPoint : MonoBehaviour
         {
             try
             {
+                Debug.Log("Reset Point");
+                //
                 var speedBoyController = other.gameObject.GetComponent<SpeedBoyController>();
                 var speedBoyMovement = other.gameObject.GetComponent<SpeedBoyMovement>();
                 //

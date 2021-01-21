@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class SpeedBoyController : MonoBehaviour, ICharacter
 {
+    public Action OnDied;
+
     [SerializeField]
     private float timeDelayBeforeDie;
 
@@ -37,19 +40,6 @@ public class SpeedBoyController : MonoBehaviour, ICharacter
 
     // Private fields
     private Coroutine coroutineWaitingToDie;
-
-    /*private void Awake()
-    {
-        int numberObject = FindObjectsOfType<SpeedBoyController>().Length;
-        if (numberObject > 1)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            DontDestroyOnLoad(gameObject);
-        }
-    }*/
 
     private void Start()
     {
@@ -87,7 +77,7 @@ public class SpeedBoyController : MonoBehaviour, ICharacter
     {
         // Dead ---------------------------------------------------------------------
         State = CharacterState.DEAD;
-        speedBoyMovement.IsRunning = false;
+        speedBoyMovement.StopRun();
         //Play Dead Effect
         deadEffect.Play();
         // Wait for delay time
@@ -102,7 +92,19 @@ public class SpeedBoyController : MonoBehaviour, ICharacter
         // Set player position back to the reset point
         speedBoyMovement.CombackToResetPoint(ResetPointPosition, SaveFacingDirection);
         State = CharacterState.ALIVE;
-        speedBoyMovement.IsRunning = true;
         coroutineWaitingToDie = null;
+
+        // Notify 
+        OnDied?.Invoke();
+    }
+
+    public void StartRun()
+    {
+        speedBoyMovement.StartRun();
+    }
+
+    public void StopRun()
+    {
+        speedBoyMovement.StopRun();
     }
 }

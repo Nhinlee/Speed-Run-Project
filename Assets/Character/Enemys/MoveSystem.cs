@@ -35,14 +35,15 @@ public class MoveSystem : MonoBehaviour
         // Insert saw 
         nextDestinatePointIndex = 1;
         //path.Insert(0, this.transform);
-        //
+
+        // AutoMove Mode
         if (IsInitialyMove)
         {
             Activate();
             return;
         }
 
-        // Event Handler
+        // Activate Mode
         if (activator!= null)
         {
             activator.onActivated += Activate;
@@ -89,9 +90,6 @@ public class MoveSystem : MonoBehaviour
 
     private void MoveToNextPosition()
     {
-        Debug.Log(nextDestinatePointIndex);
-        Debug.Log(isGoBack);
-        Debug.Log(gameObject);
         if (nextDestinatePointIndex >= path.Count || nextDestinatePointIndex < 0) return;
 
         var hash = new Hashtable()
@@ -102,9 +100,16 @@ public class MoveSystem : MonoBehaviour
             {"oncomplete", "Activate"},
             {"ignoretimescale", true },
         };
-        if (isGoBack == 1) nextDestinatePointIndex--;
+
+        if (isGoBack == 1)
+        {
+            nextDestinatePointIndex--;
+        }
         else
+        {
             nextDestinatePointIndex++;
+        }
+
         iTween.MoveTo(gameObject, hash);
     }
 
