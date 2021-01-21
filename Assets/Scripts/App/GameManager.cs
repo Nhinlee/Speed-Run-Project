@@ -31,8 +31,8 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this);
 
         // Register call back
-        speedBoyController.OnDied += Play;
-        countDownTimer.onFinishCountdown += Play;
+        speedBoyController.OnDied += PlayAgain;
+        countDownTimer.onFinishCountdown += StartPlay;
         endPoint.OnWin += Win;
     }
 
@@ -41,8 +41,8 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         // Unregister call back
-        speedBoyController.OnDied -= Play;
-        countDownTimer.onFinishCountdown -= Play;
+        speedBoyController.OnDied -= StartPlay;
+        countDownTimer.onFinishCountdown -= StartPlay;
         endPoint.OnWin -= Win;
     }
 
@@ -65,11 +65,17 @@ public class GameManager : MonoBehaviour
     {
         // Load menu scene
         GameLoader.Instance.LoadMenuScene();
+        AudioManager.Instance?.PlayStartGameMusic();
         // Clear level
         Destroy(gameObject);
     }
 
-    private void Play()
+    private void StartPlay()
+    {
+        AudioManager.Instance?.PlayMapBackgroundMusic();
+        speedBoyController.StartRun();
+    }
+    private void PlayAgain()
     {
         speedBoyController.StartRun();
     }

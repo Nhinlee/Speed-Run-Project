@@ -32,6 +32,9 @@ public class LazerBossManager : MonoBehaviour, ICharacter
     [Tooltip("Seconds")]
     private float timeDelayToDead;
 
+    [SerializeField]
+    private Door door;
+
     // Private fields
     private float numCurrentDeactivatedBrain = 0;
     private int currentHealth;
@@ -112,5 +115,6 @@ public class LazerBossManager : MonoBehaviour, ICharacter
         lazerGun.gameObject.SetActive(false);
         Destroy(gameObject, timeDelayToDead);
         // TODO: Open the door to player through and win this level.
+        door.Open(); 
     }
 }
