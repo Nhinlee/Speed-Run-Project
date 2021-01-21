@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// GameManager is brain of level. This decide how level run, control all stuff in level.
+/// Start/Pause/Return/... in here
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
@@ -10,6 +14,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private SpeedBoyController speedBoyController;
+
+    [SerializeField]
+    private EndPoint endPoint;
 
     // Singleton
     static GameManager current;
@@ -26,13 +33,17 @@ public class GameManager : MonoBehaviour
         // Register call back
         speedBoyController.OnDied += Play;
         countDownTimer.onFinishCountdown += Play;
+        endPoint.OnWin += Win;
     }
+
+  
 
     private void OnDestroy()
     {
         // Unregister call back
         speedBoyController.OnDied -= Play;
         countDownTimer.onFinishCountdown -= Play;
+        endPoint.OnWin -= Win;
     }
 
     void Start()
@@ -61,5 +72,10 @@ public class GameManager : MonoBehaviour
     private void Play()
     {
         speedBoyController.StartRun();
+    }
+    private void Win()
+    {
+        // TODO: Implement win scenario
+        ReturnToMenu();
     }
 }

@@ -49,6 +49,9 @@ TagManager:
   - name: Saw
     uniqueID: 758347375
     locked: 0
+  - name: Things
+    uniqueID: 2758128717
+    locked: 0
   - name: Foreground
     uniqueID: 2630748643
     locked: 0

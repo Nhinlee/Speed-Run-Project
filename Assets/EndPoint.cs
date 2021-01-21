@@ -1,18 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EndPoint : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Action OnWin; 
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // TODO refactor player tag -> move into constant class
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Win");
+            OnWin?.Invoke();
+        }
     }
 }
