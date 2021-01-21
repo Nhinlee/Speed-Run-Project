@@ -290,6 +290,8 @@ MonoBehaviour:
   - 3
   activator: {fileID: 0}
   IsLoop: 1
+  loopTimes: 999
+  IsInitialyMove: 1
 --- !u!1001 &7024926463017826644
 PrefabInstance:
   m_ObjectHideFlags: 0
